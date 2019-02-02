@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3000;
 // Routes
 const home = require('./routes/home');
 const genres = require('./routes/genres');
+const customers = require('./routes/customers');
 
 mongoose.connect('mongodb://localhost:27017/vidly', { useNewUrlParser: true, useFindAndModify: false })
     .then(() => console.log('Connected to the MongoDB...'))
@@ -15,5 +16,6 @@ app.use(express.json());
 // Routes
 app.use('/', home);
 app.use('/api/genres', genres);
+app.use('/api/customers', customers);
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

@@ -8,12 +8,12 @@ const Genre = mongoose.model('Genre', {
         minlength: 3,
         maxlength: 50
     }
-})
+});
 
 const validateGenre = genre => {
     const schema = { name: Joi.string().min(3).required() };
     return Joi.validate(genre, schema);
-}
+};
 
 router.get('/', async (req, res) => {
     try {
