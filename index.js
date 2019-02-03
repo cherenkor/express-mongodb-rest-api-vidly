@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Joi = require('Joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
