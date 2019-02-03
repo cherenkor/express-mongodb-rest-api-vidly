@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Genre, validate } = require('../models/genre');
+const { Genre, validateGenre } = require('../models/genre');
 
 router.get('/', async (req, res) => {
     try {
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const genreData = req.body;
-    const { error } = validate(genreData);
+    const { error } = validateGenre(genreData);
     if (error) return res.status(400).send(error.details[0].message);
 
     try {
@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const genreData = req.body;
-        const { error } = validate(genreData);
+        const { error } = validateGenre(genreData);
         if (error) return res.status(400).send(error.details[0].message);
 
         const id = req.params.id;
