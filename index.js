@@ -1,3 +1,4 @@
+const config = require('config');
 const mongoose = require('mongoose');
 const Joi = require('Joi');
 Joi.objectId = require('joi-objectid')(Joi);
@@ -12,6 +13,11 @@ const customers = require('./routes/customers');
 const rentals = require('./routes/rentals');
 const users = require('./routes/users');
 const auth = require('./routes/auth');
+
+if (!config.get('jsonPrivateKey')) {
+    console.error('FATAL ERROR: jsonPrivateKey does not set up');
+    process.exit(1);
+}
 
 mongoose.connect(
     'mongodb://localhost:27017/vidly',
