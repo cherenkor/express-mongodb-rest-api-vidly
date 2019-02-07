@@ -1,15 +1,27 @@
+const auth = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { pick } = require('lodash');
 const router = require('express').Router();
 const { User, validateUser } = require('../models/user');
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await User.find().select('-password');
         res.send(users);
     } catch (e) {
         console.error(e);
         res.status(500).send('Something went wrong. Check your request.');
+    }
+})
+
+router.get('/me', auth, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).select('-password');
+        res.send(user);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Something went wrong. Check your request.')
     }
 })
 
