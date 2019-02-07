@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const Fawn = require('fawn');
@@ -17,7 +18,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validateRental(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
