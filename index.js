@@ -1,5 +1,6 @@
 require('express-async-errors');
 const error = require('./middleware/error.js');
+const winston = require('winston');
 const config = require('config');
 const mongoose = require('mongoose');
 const Joi = require('Joi');
@@ -20,6 +21,8 @@ if (!config.get('jsonPrivateKey')) {
     console.error('FATAL ERROR: jsonPrivateKey does not set up');
     process.exit(1);
 }
+
+winston.add(new winston.transports.File({ filename: 'logfile.log'}));
 
 mongoose.connect(
     'mongodb://localhost:27017/vidly',
