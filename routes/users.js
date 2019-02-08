@@ -5,24 +5,14 @@ const router = require('express').Router();
 const { User, validateUser } = require('../models/user');
 
 router.get('/', auth, async (req, res) => {
-    try {
-        const users = await User.find().select('-password');
-        res.send(users);
-    } catch (e) {
-        console.error(e);
-        res.status(500).send('Something went wrong. Check your request.');
-    }
+    const users = await User.find().select('-password');
+    res.send(users);
 })
 
 router.get('/me', auth, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const user = await User.findById(userId).select('-password');
-        res.send(user);
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('Something went wrong. Check your request.')
-    }
+    const userId = req.user._id;
+    const user = await User.findById(userId).select('-password');
+    res.send(user);
 })
 
 router.post('/', async (req, res) => {
@@ -30,23 +20,18 @@ router.post('/', async (req, res) => {
     const { error } = validateUser(userData);
     if (error) return res.status(400).send(error.details[0].message);
 
-    try {
-        let user = await User.findOne({ email: userData.email });
-        if (user) return res.status(400).send(`User with email ${userData.email} has already been registered.`);
+    let user = await User.findOne({ email: userData.email });
+    if (user) return res.status(400).send(`User with email ${userData.email} has already been registered.`);
 
-        user = new User(userData);
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
-        await user.save();
+    user = new User(userData);
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    await user.save();
 
-        const token = user.generateAuthToken();
-        res
-            .header('x-auth-token', token)
-            .send(pick(user, ['_id', 'name', 'email']));
-    } catch (e) {
-        console.error(e);
-        res.status(500).send('Something went wrong. Check your request.');
-    }
+    const token = user.generateAuthToken();
+    res
+        .header('x-auth-token', token)
+        .send(pick(user, ['_id', 'name', 'email']));
 })
 
 module.exports = router;

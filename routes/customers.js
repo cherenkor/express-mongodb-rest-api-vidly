@@ -3,26 +3,16 @@ const router = require('express').Router();
 const { Customer, validateCustomer } = require('../models/customer');
 
 router.get('/', async (req, res) => {
-    try {
-        const customers = await Customer.find().sort('name');
-        res.send(customers);
-    } catch (e) {
-        console.error(e)
-        res.status(500).send('Something went wrong. Check your request.')
-    }
+    const customers = await Customer.find().sort('name');
+    res.send(customers);
 })
 
 router.get('/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        const customer = await Customer.findById(id);
-        if (!customer) return res.status(404).send(`Can not found a customer with id ${id}`);
+    const id = req.params.id;
+    const customer = await Customer.findById(id);
+    if (!customer) return res.status(404).send(`Can not found a customer with id ${id}`);
 
-        res.send(customer);
-    } catch (e) {
-        console.error(e)
-        res.status(500).send('Something went wrong. Check your request.')
-    }
+    res.send(customer);
 })
 
 router.post('/', auth, async (req, res) => {
@@ -30,45 +20,29 @@ router.post('/', auth, async (req, res) => {
     const { error } = validateCustomer(customerData);
     if (error) return res.status(400).send(error.details[0].message);
 
-    try {
-        const customer = new Customer(customerData);
-        await customer.save();
-        res.send(customer);
-    } catch (e) {
-        console.error(e)
-        res.status(500).send('Something went wrong. Check your request.')
-    }
+    const customer = new Customer(customerData);
+    await customer.save();
+    res.send(customer);
 })
 
 router.put('/:id', auth, async (req, res) => {
-    try {
-        const customerData = req.body;
-        const { error } = validateCustomer(customerData);
-        if (error) return res.status(400).send(error.details[0].message);
+    const customerData = req.body;
+    const { error } = validateCustomer(customerData);
+    if (error) return res.status(400).send(error.details[0].message);
 
-        const id = req.params.id;
-        const customer = await Customer.findByIdAndUpdate(id, customerData, { new: true });
-        if (!customer) return res.status(404).send(`Can not found a customer with id ${id}`);
+    const id = req.params.id;
+    const customer = await Customer.findByIdAndUpdate(id, customerData, { new: true });
+    if (!customer) return res.status(404).send(`Can not found a customer with id ${id}`);
 
-        res.send(customer);
-    } catch (e) {
-        console.error(e)
-        res.status(500).send('Something went wrong. Check your request.')
-    }
+    res.send(customer);
 })
 
 router.delete('/:id', auth, async (req, res) => {
-    try {
-        const id = req.params.id;
-        const customer = await Customer.findByIdAndRemove(id);
+    const id = req.params.id;
+    const customer = await Customer.findByIdAndRemove(id);
+    if (!customer) return res.status(404).send(`Can not found a customer with id ${id}`);
 
-        if (!customer) return res.status(404).send(`Can not found a customer with id ${id}`);
-
-        res.send(customer);
-    } catch (e) {
-        console.error(e)
-        res.status(500).send('Something went wrong. Check your request.')
-    }
+    res.send(customer);
 })
 
 module.exports = router;

@@ -1,3 +1,5 @@
+require('express-async-errors');
+const error = require('./middleware/error.js');
 const config = require('config');
 const mongoose = require('mongoose');
 const Joi = require('Joi');
@@ -39,5 +41,6 @@ app.use('/api/customers', customers);
 app.use('/api/rentals', rentals);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
+app.use(error);
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
