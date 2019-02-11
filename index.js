@@ -24,6 +24,13 @@ if (!config.get("jsonPrivateKey")) {
 
 winston.add(new winston.transports.File({ filename: "logfile.log" }));
 
+process.on("uncaughtException", ex => {
+  console.log("Something faild during startup");
+  winston.error(ex.message, ex);
+});
+
+throw new Error("Manual error");
+
 mongoose
   .connect("mongodb://localhost:27017/vidly", {
     useNewUrlParser: true,
