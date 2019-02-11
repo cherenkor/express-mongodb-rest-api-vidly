@@ -29,7 +29,14 @@ process.on("uncaughtException", ex => {
   winston.error(ex.message, ex);
 });
 
-throw new Error("Manual error");
+winston.exceptions.handle(
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
+
+process.on("unhandledRejection", ex => {
+  winston.error(ex.message, ex);
+  process.exit(1);
+});
 
 mongoose
   .connect("mongodb://localhost:27017/vidly", {
