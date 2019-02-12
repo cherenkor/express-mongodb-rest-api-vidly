@@ -1,7 +1,7 @@
 const config = require("config");
 
 module.exports = function() {
-  if (!config.get("jsonPrivateKey")) {
-    throw new Error("FATAL ERROR: jsonPrivateKey does not set up");
+  if (!config.get("jwtPrivateKey")) {
+    throw new Error("FATAL ERROR: jwtPrivateKey does not set up");
   }
 };
