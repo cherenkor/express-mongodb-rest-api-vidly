@@ -1,3 +1,4 @@
+const validateObjectID = require("../middleware/validateObjectID");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const router = require("express").Router();
@@ -18,7 +19,7 @@ router.post("/", auth, async (req, res) => {
   res.send(genre);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateObjectID, async (req, res) => {
   const id = req.params.id;
   const genre = await Genre.findById(id);
   if (!genre) return res.status(404).send(`Didn't find genre with id ${id}`);
@@ -38,7 +39,7 @@ router.put("/:id", auth, async (req, res) => {
   res.send(genre);
 });
 
-router.delete("/:id", [auth, admin], async (req, res) => {
+router.delete("/:id", [auth, admin, validateObjectID], async (req, res) => {
   const id = req.params.id;
   const genre = await Genre.findByIdAndRemove(id);
   if (!genre) return res.status(404).send(`Didn't found genre with id ${id}`);
