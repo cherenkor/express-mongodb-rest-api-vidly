@@ -1,5 +1,6 @@
 const request = require("supertest");
 const { Genre } = require("../../models/genre");
+const { User } = require("../../models/user");
 let server;
 
 describe("/api/genres", () => {
@@ -34,6 +35,55 @@ describe("/api/genres", () => {
     it("should return a status 404 if invalid ObjectId is passed", async () => {
       const res = await request(server).get("/api/genres/1");
       expect(res.status).toBe(404);
+    });
+  });
+
+  describe("POST /", () => {
+    it("should return a status 401 if a user is not logged in", async () => {
+      const res = await request(server)
+        .post("/api/genres")
+        .send({ name: "genre1" });
+      expect(res.status).toBe(401);
+    });
+
+    it("should return a status 400 if a genre's name is more than 50 characters", async () => {
+      const name = new Array(52).join("a");
+      const token = new User().generateAuthToken();
+      const res = await request(server)
+        .post("/api/genres")
+        .set("x-auth-token", token)
+        .send({ name });
+      expect(res.status).toBe(400);
+    });
+
+    it("should return a status 400 if a genre's name is less than 5 characters", async () => {
+      const token = new User().generateAuthToken();
+      const res = await request(server)
+        .post("/api/genres")
+        .set("x-auth-token", token)
+        .send({ name: "123" });
+      expect(res.status).toBe(400);
+    });
+
+    it("should a genre if it's valid", async () => {
+      const token = new User().generateAuthToken();
+      const genreData = { name: "genre1" };
+      const res = await request(server)
+        .post("/api/genres")
+        .set("x-auth-token", token)
+        .send(genreData);
+      const genre = await Genre.find(genreData);
+      expect(genre).not.toBeNull();
+    });
+
+    it("should return a genre in the response", async () => {
+      const token = new User().generateAuthToken();
+      const res = await request(server)
+        .post("/api/genres")
+        .set("x-auth-token", token)
+        .send({ name: "genre1" });
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", "genre1");
     });
   });
 });
